@@ -17,7 +17,7 @@ rev([], []) :- !.
 rev([H|T],L) :- rev(T,T2), append([T2, [H]], L), !.
 rev(L,[H|T]) :- rev(T,T2), append([T2, [H]], L).
 
-palindrome(L) :- reverse(L, L2), L = L2.
+palindrome(L) :- reverse(L, L).
 
 my_flatten([], []).
 my_flatten([H|T], L) :- is_list(H), my_flatten(H, H2), my_flatten(T, T2), lists:append(H2, T2, L).
