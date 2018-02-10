@@ -27,3 +27,16 @@ compress([], []).
 compress([X], [X]).
 compress([H,H|T], L) :- compress([H|T], L).
 compress([X,Y|T], [X|L]) :- X \= Y, compress([Y|T], L).
+
+% 1.09 (**) Pack consecutive duplicates of list elements into sublists. 
+%   If a list contains repeated elements they should be placed in separate sublists.
+% Example:
+%   ?- pack([a,a,a,a,b,c,c,a,a,d,e,e,e,e],X).
+%   X = [[a,a,a,a],[b],[c,c],[a,a],[d],[e,e,e,e]]
+wrap([],[]).
+wrap([X|Xs],[[X]|Ys]) :- wrap(Xs,Ys).
+condense([Xs],[Xs]) :- is_list(Xs).
+condense([[X|Xs],[X]|Ys], Zs) :- condense([[X,X|Xs]|Ys], Zs).
+condense([[X|Xs],[Y]|Ys], [[X|Xs]|Zs]) :- X \= Y, condense([[Y]|Ys],Zs).
+pack([],[]).
+pack(Xs,L) :- wrap(Xs,Ys), condense(Ys,L).
