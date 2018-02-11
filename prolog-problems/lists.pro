@@ -54,3 +54,16 @@ encode_packed([],[]).
 encode_packed([X|Xs], [Y|Ys]) :- encode_item(X,Y), encode_packed(Xs,Ys).
 encode([],[]).
 encode([X|Xs],Zs) :- pack([X|Xs], Ys), encode_packed(Ys,Zs).
+
+% 1.11 (*) Modified run-length encoding.
+%   Modify the result of problem 1.10 in such a way that if an element has no
+%   duplicates it is simply copied into the result list. Only elements with 
+%   duplicates are transferred as [N,E] terms.
+% Example:
+%   ?- encode_modified([a,a,a,a,b,c,c,a,a,d,e,e,e,e],X).
+%   X = [[4,a],b,[2,c],[2,a],d,[4,e]]
+simplify([],[]).
+simplify([[1,X]|Xs], [X|Ys]) :- simplify(Xs,Ys).
+simplify([[N,X]|Xs], [[N,X]|Ys]) :- N > 1, simplify(Xs,Ys).
+encode_modified([], []).
+encode_modified([X|Xs], Zs) :- encode([X|Xs], Ys), simplify(Ys,Zs).
