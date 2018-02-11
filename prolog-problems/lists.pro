@@ -40,3 +40,17 @@ condense([[X|Xs],[X]|Ys], Zs) :- condense([[X,X|Xs]|Ys], Zs).
 condense([[X|Xs],[Y]|Ys], [[X|Xs]|Zs]) :- X \= Y, condense([[Y]|Ys],Zs).
 pack([],[]).
 pack(Xs,L) :- wrap(Xs,Ys), condense(Ys,L).
+
+% 1.10 (*) Run-length encoding of a list.
+%   Use the result of problem 1.09 to implement the so-called run-length 
+%   encoding data compression method. Consecutive duplicates of elements are 
+%   encoded as terms [N,E] where N is the number of duplicates of the element 
+%   E.
+% Example:
+%   ?- encode([a,a,a,a,b,c,c,a,a,d,e,e,e,e],X).
+%   X = [[4,a],[1,b],[2,c],[2,a],[1,d],[4,e]]
+encode_item([X|Xs],[Nx,X]) :- length([X|Xs], Nx).
+encode_packed([],[]).
+encode_packed([X|Xs], [Y|Ys]) :- encode_item(X,Y), encode_packed(Xs,Ys).
+encode([],[]).
+encode([X|Xs],Zs) :- pack([X|Xs], Ys), encode_packed(Ys,Zs).
