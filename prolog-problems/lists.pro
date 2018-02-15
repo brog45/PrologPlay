@@ -67,3 +67,11 @@ simplify([[1,X]|Xs], [X|Ys]) :- simplify(Xs,Ys).
 simplify([[N,X]|Xs], [[N,X]|Ys]) :- N > 1, simplify(Xs,Ys).
 encode_modified([], []).
 encode_modified([X|Xs], Zs) :- encode([X|Xs], Ys), simplify(Ys,Zs).
+
+% 1.12 (**) Decode a run-length encoded list.
+%   Given a run-length code list generated as specified in problem 1.11. 
+%   Construct its uncompressed version.
+decode([], []).
+decode([[1,X]|Xs], [X|Ys]) :- decode(Xs, Ys).
+decode([[N,X]|Xs], [X|Ys]) :- N > 1, N2 is N - 1, decode([[N2,X]|Xs], Ys).
+decode([X|Xs], [X|Ys]) :- \+ is_list(X), decode(Xs, Ys).
