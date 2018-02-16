@@ -91,3 +91,10 @@ encode_direct([X,Y|Xs],[X|Zs]) :- X \= Y, \+ is_list(X), \+ is_list(Y), encode_d
 encode_direct([[N,X]],[[N,X]]) :- N > 0.
 encode_direct([[N,X],X|Xs],L) :- N2 is N + 1, encode_direct([[N2,X]|Xs],L).
 encode_direct([[N,X],Y|Xs],[[N,X]|L]) :- X \= Y, encode_direct([Y|Xs],L).
+
+% 1.14 (*) Duplicate the elements of a list.
+% Example:
+%     ?- dupli([a,b,c,c,d],X).
+%     X = [a,a,b,b,c,c,c,c,d,d]
+dupli([],[]).
+dupli([X|Xs],[X,X|Ys]) :- dupli(Xs,Ys).
