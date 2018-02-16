@@ -75,3 +75,19 @@ decode([], []).
 decode([[1,X]|Xs], [X|Ys]) :- decode(Xs, Ys).
 decode([[N,X]|Xs], [X|Ys]) :- N > 1, N2 is N - 1, decode([[N2,X]|Xs], Ys).
 decode([X|Xs], [X|Ys]) :- \+ is_list(X), decode(Xs, Ys).
+
+% 1.13 (**) Run-length encoding of a list (direct solution).
+%   Implement the so-called run-length encoding data compression method 
+%   directly. I.e. don't explicitly create the sublists containing the 
+%   duplicates, as in problem 1.09, but only count them. As in problem 1.11, 
+%   simplify the result list by replacing the singleton terms [1,X] by X.
+% Example:
+%   ?- encode_direct([a,a,a,a,b,c,c,a,a,d,e,e,e,e],X).
+%   X = [[4,a],b,[2,c],[2,a],d,[4,e]]
+encode_direct([],[]).
+encode_direct([X],[X]) :- \+ is_list(X).
+encode_direct([X,X|Xs],L) :- \+ is_list(X), encode_direct([[2,X]|Xs],L).
+encode_direct([X,Y|Xs],[X|Zs]) :- X \= Y, \+ is_list(X), \+ is_list(Y), encode_direct([Y|Xs],Zs).
+encode_direct([[N,X]],[[N,X]]) :- N > 0.
+encode_direct([[N,X],X|Xs],L) :- N2 is N + 1, encode_direct([[N2,X]|Xs],L).
+encode_direct([[N,X],Y|Xs],[[N,X]|L]) :- X \= Y, encode_direct([Y|Xs],L).
