@@ -126,3 +126,13 @@ drop([X|Xs],Nx,[X|Ys],N) :- Nx > 1, Ny is Nx - 1, drop(Xs,Ny,Ys,N).
 %     L2 = [d,e,f,g,h,i,k]
 split([X|Xs],1,[X],Xs).
 split([X|Xs],N,[X|Ys],Zs) :- N > 1, N2 is N - 1, split(Xs, N2, Ys, Zs).
+
+% 1.18 (**) Extract a slice from a list.
+%   Given two indices, I and K, the slice is the list containing the elements
+%   between the I'th and K'th element of the original list (both limits 
+%   included). Start counting the elements with 1.
+% Example:
+%   ?- slice([a,b,c,d,e,f,g,h,i,k],3,7,L).
+%   L = [c,d,e,f,g]
+slice(Xs,1,K,Ys) :- split(Xs,K,Ys,_).
+slice([_|Xs],I,K,Ys) :- I > 1, I2 is I - 1, K2 is K - 1, slice(Xs,I2,K2,Ys).
