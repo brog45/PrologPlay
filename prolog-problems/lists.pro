@@ -117,3 +117,12 @@ drop([X],N,[X]) :- N > 1.
 drop([X1,X2|Xs], N, L2) :- N > 1, drop([X1,X2|Xs], N, L2, N).
 drop([_|Xs],1,Ys,N) :- drop(Xs,N,Ys).
 drop([X|Xs],Nx,[X|Ys],N) :- Nx > 1, Ny is Nx - 1, drop(Xs,Ny,Ys,N).
+
+% 1.17 (*) Split a list into two parts; the length of the first part is given.
+%     Do not use any predefined predicates.
+% Example:
+%     ?- split([a,b,c,d,e,f,g,h,i,k],3,L1,L2).
+%     L1 = [a,b,c]
+%     L2 = [d,e,f,g,h,i,k]
+split([X|Xs],1,[X],Xs).
+split([X|Xs],N,[X|Ys],Zs) :- N > 1, N2 is N - 1, split(Xs, N2, Ys, Zs).
