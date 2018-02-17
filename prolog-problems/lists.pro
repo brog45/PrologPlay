@@ -106,3 +106,14 @@ dupli([X|Xs],[X,X|Ys]) :- dupli(Xs,Ys).
 dupli([X],1,[X]).
 dupli([X],N,[X|Xs]) :- N > 1, N2 is N - 1, dupli([X],N2,Xs).
 dupli([X,Y|Ys], N, L) :- dupli([X], N, Xs), dupli([Y|Ys], N, Zs), append(Xs, Zs, L).
+
+% 1.16 (**) Drop every N'th element from a list.
+% Example:
+%     ?- drop([a,b,c,d,e,f,g,h,i,k],3,X).
+%     X = [a,b,d,e,g,h,k]
+drop([],_,[]).
+drop([_|_],1,[]).
+drop([X],N,[X]) :- N > 1.
+drop([X1,X2|Xs], N, L2) :- N > 1, drop([X1,X2|Xs], N, L2, N).
+drop([_|Xs],1,Ys,N) :- drop(Xs,N,Ys).
+drop([X|Xs],Nx,[X|Ys],N) :- Nx > 1, Ny is Nx - 1, drop(Xs,Ny,Ys,N).
