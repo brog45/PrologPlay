@@ -98,3 +98,11 @@ encode_direct([[N,X],Y|Xs],[[N,X]|L]) :- X \= Y, encode_direct([Y|Xs],L).
 %     X = [a,a,b,b,c,c,c,c,d,d]
 dupli([],[]).
 dupli([X|Xs],[X,X|Ys]) :- dupli(Xs,Ys).
+
+% 1.15 (**) Duplicate the elements of a list a given number of times.
+% Example:
+%     ?- dupli([a,b,c],3,X).
+%     X = [a,a,a,b,b,b,c,c,c]
+dupli([X],1,[X]).
+dupli([X],N,[X|Xs]) :- N > 1, N2 is N - 1, dupli([X],N2,Xs).
+dupli([X,Y|Ys], N, L) :- dupli([X], N, Xs), dupli([Y|Ys], N, Zs), append(Xs, Zs, L).
