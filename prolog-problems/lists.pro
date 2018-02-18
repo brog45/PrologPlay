@@ -194,3 +194,12 @@ rnd_select(L,N,[Y|Zs]) :-
     remove_at(Y,L,Random,Ys),
     N2 is N - 1,
     rnd_select(Ys,N2,Zs).
+
+% 1.24 (*) Lotto: Draw N different random numbers from the set 1..M.
+%     The selected numbers shall be put into a result list.
+% Example:
+%     ?- lotto(6,49,L).
+%     L = [23,1,17,33,21,37]
+%
+%     Hint: Combine the solutions of problems 1.22 and 1.23.
+lotto(N,U,L) :- range(1,U,R), rnd_select(R,N,L).
