@@ -203,3 +203,11 @@ rnd_select(L,N,[Y|Zs]) :-
 %
 %     Hint: Combine the solutions of problems 1.22 and 1.23.
 lotto(N,U,L) :- range(1,U,R), rnd_select(R,N,L).
+
+% 1.25 (*) Generate a random permutation of the elements of a list.
+% Example:
+%     ?- rnd_permu([a,b,c,d,e,f],L).
+%     L = [b,a,d,c,e,f]
+%
+%     Hint: Use the solution of problem 1.23.
+rnd_permu(L1,L2) :- length(L1,N), rnd_select(L1,N,L2).
