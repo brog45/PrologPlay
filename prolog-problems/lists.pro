@@ -211,3 +211,21 @@ lotto(N,U,L) :- range(1,U,R), rnd_select(R,N,L).
 %
 %     Hint: Use the solution of problem 1.23.
 rnd_permu(L1,L2) :- length(L1,N), rnd_select(L1,N,L2).
+
+% 1.26 (**) Generate the combinations of K distinct objects chosen from the N 
+%   elements of a list.
+%   In how many ways can a committee of 3 be chosen from a group of 12 people? 
+%   We all know that there are C(12,3) = 220 possibilities (C(N,K) denotes the 
+%   well-known binomial coefficients). For pure mathematicians, this result may
+%   be great. But we want to really generate all the possibilities (via 
+%   backtracking).
+% Example:
+%   ?- combination(3,[a,b,c,d,e,f],L).
+%   L = [a,b,c] ;
+%   L = [a,b,d] ;
+%   L = [a,b,e] ;
+%   ...
+combination(1, [X|_], [X]).
+combination(1, [_|Xs], Ys) :- combination(1,Xs,Ys).
+combination(N, [X|Xs], [X|Ys]) :- N > 1, N2 is N-1, combination(N2,Xs,Ys).
+combination(N, [_|Xs], Ys) :- N > 1, combination(N,Xs,Ys).
