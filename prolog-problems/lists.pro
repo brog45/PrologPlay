@@ -158,3 +158,11 @@ rotate(L1,N,L4) :- N > 0, length(L1, Length), N < Length, split(L1,N,L2,L3), app
 %     R = [a,c,d]
 remove_at(X,[X|R],1,R).
 remove_at(X,[Y|Ys],N,R) :- N > 1, N2 is N - 1, remove_at(X,Ys,N2,R2), append([Y],R2,R).
+
+% 1.21 (*) Insert an element at a given position into a list.
+% Example:
+%     ?- insert_at(alfa,[a,b,c,d],2,L).
+%     L = [a,alfa,b,c,d]
+insert_at(X,[],1,[X]).
+insert_at(X,[Y|Ys],1,[X,Y|Ys]).
+insert_at(X,[Y|Ys],N,[Y|Zs]) :- N > 1, N2 is N - 1, insert_at(X,Ys,N2,Zs).
