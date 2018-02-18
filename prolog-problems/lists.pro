@@ -174,3 +174,23 @@ insert_at(X,[Y|Ys],N,[Y|Zs]) :- N > 1, N2 is N - 1, insert_at(X,Ys,N2,Zs).
 range(X,X,[X]).
 range(From,To,[From|Xs]) :- From < To, From2 is From+1, range(From2,To,Xs).
 range(From,To,[From|Xs]) :- From > To, From2 is From-1, range(From2,To,Xs).
+
+% 1.23 (**) Extract a given number of randomly selected elements from a list.
+%     The selected items shall be put into a result list.
+% Example:
+%     ?- rnd_select([a,b,c,d,e,f,g,h],3,L).
+%     L = [e,d,a]
+%
+%     Hint: Use the built-in random number generator random/2 and the result of problem 1.20.
+rnd_select(_,0,[]).
+rnd_select([X],1,[X]).
+rnd_select(L,N,[Y|Zs]) :- 
+    N >= 1,
+    length(L,Length), 
+    Length > 1,
+    N =< Length,
+    % There is no built-in random/2 and random/3 excludes the upper bound.
+    random_between(1,Length,Random), 
+    remove_at(Y,L,Random,Ys),
+    N2 is N - 1,
+    rnd_select(Ys,N2,Zs).
