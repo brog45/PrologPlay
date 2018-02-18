@@ -150,3 +150,11 @@ rotate(L,0,L).
 rotate(L1,N,L2) :- N < 0, length(L1, Length), N2 is Length - (-N mod Length), rotate(L1,N2,L2).
 rotate(L1,N,L2) :- N > 0, length(L1, Length), N >= Length, N2 is N mod Length, rotate(L1,N2,L2).
 rotate(L1,N,L4) :- N > 0, length(L1, Length), N < Length, split(L1,N,L2,L3), append(L3,L2,L4).
+
+% 1.20 (*) Remove the K'th element from a list.
+% Example:
+%     ?- remove_at(X,[a,b,c,d],2,R).
+%     X = b
+%     R = [a,c,d]
+remove_at(X,[X|R],1,R).
+remove_at(X,[Y|Ys],N,R) :- N > 1, N2 is N - 1, remove_at(X,Ys,N2,R2), append([Y],R2,R).
