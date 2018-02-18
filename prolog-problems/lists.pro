@@ -166,3 +166,11 @@ remove_at(X,[Y|Ys],N,R) :- N > 1, N2 is N - 1, remove_at(X,Ys,N2,R2), append([Y]
 insert_at(X,[],1,[X]).
 insert_at(X,[Y|Ys],1,[X,Y|Ys]).
 insert_at(X,[Y|Ys],N,[Y|Zs]) :- N > 1, N2 is N - 1, insert_at(X,Ys,N2,Zs).
+
+% 1.22 (*) Create a list containing all integers within a given range.
+% Example:
+%     ?- range(4,9,L).
+%     L = [4,5,6,7,8,9]
+range(X,X,[X]).
+range(From,To,[From|Xs]) :- From < To, From2 is From+1, range(From2,To,Xs).
+range(From,To,[From|Xs]) :- From > To, From2 is From-1, range(From2,To,Xs).
