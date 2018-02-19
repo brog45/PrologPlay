@@ -229,3 +229,40 @@ combination(1, [X|_], [X]).
 combination(1, [_|Xs], Ys) :- combination(1,Xs,Ys).
 combination(N, [X|Xs], [X|Ys]) :- N > 1, N2 is N-1, combination(N2,Xs,Ys).
 combination(N, [_|Xs], Ys) :- N > 1, combination(N,Xs,Ys).
+
+% 1.27 (**) Group the elements of a set into disjoint subsets.
+%   a) In how many ways can a group of 9 people work in 3 disjoint subgroups of
+%      2, 3 and 4 persons? Write a predicate that generates all the
+%      possibilities via backtracking.
+% Example:
+%   ?- group3([aldo,beat,carla,david,evi,flip,gary,hugo,ida],G1,G2,G3).
+%   G1 = [aldo,beat], G2 = [carla,david,evi], G3 = [flip,gary,hugo,ida]
+%   ...
+groupN(1, [X|Xs], [X], Xs).
+groupN(1, [X|Xs], Ys, [X|Zs]) :- groupN(1, Xs, Ys, Zs).
+groupN(N, [X|Xs], [X|Ys], Zs) :- N > 1, N2 is N-1, groupN(N2, Xs, Ys, Zs).
+groupN(N, [X|Xs], Ys, [X|Zs]) :- N > 1, groupN(N, Xs, Ys, Zs).
+
+group3(L, G1, G2, G3) :- 
+    length(L, N), 
+    N = 9, 
+    groupN(2, L, G1, G), 
+    groupN(3, G, G2, G3).
+
+%   b) Generalize the above predicate in a way that we can specify a list of
+%      group sizes and the predicate will return a list of groups.
+% 
+% Example:
+% ?- group([aldo,beat,carla,david,evi,flip,gary,hugo,ida],[2,2,5],Gs).
+% Gs = [[aldo,beat],[carla,david],[evi,flip,gary,hugo,ida]]
+% ...
+% 
+% Note that we do not want permutations of the group members; i.e.
+% [[aldo,beat],...] is the same solution as [[beat,aldo],...]. However, we make
+% a difference between [[aldo,beat],[carla,david],...] and
+% [[carla,david],[aldo,beat],...].
+% 
+% You may find more about this combinatorial problem in a good book on discrete
+% mathematics under the term "multinomial coefficients".
+group(L, [X,Y], [G|[Gs]]) :- length(L,Length), Length is X + Y, groupN(X, L, G, Gs).
+group(L, [N1,N2,N3|Ns], [G|Gs]) :- groupN(N1, L, G, Xs), group(Xs, [N2,N3|Ns], Gs).
