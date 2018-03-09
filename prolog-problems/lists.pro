@@ -274,16 +274,21 @@ group(L, [N1,N2,N3|Ns], [G|Gs]) :- groupN(N1, L, G, Xs), group(Xs, [N2,N3|Ns], G
 % Example:
 %   ?- lsort([[a,b,c],[d,e],[f,g,h],[d,e],[i,j,k,l],[m,n],[o]],L).
 %   L = [[o], [d, e], [d, e], [m, n], [a, b, c], [f, g, h], [i, j, k, l]]
-shorter(A,B,A,B) :- length(A, La), length(B, Lb), La < Lb, !.
-shorter(A,B,B,A).
-lsort([X], X, []).
-lsort([L1,L2|Ls], X, [Min2|OutRest2]) :- 
-    lsort([L2|Ls], LsMin, OutRestLs),
-    shorter(L1, LsMin, X, Y),
-    lsort([Y|OutRestLs], Min2, OutRest2).
-lsort([],[]).
-lsort([H|T],[Min|Rest]) :- 
-    lsort([H|T], Min, Rest).
+add_key(Xs, N-Xs) :- 
+    length(Xs, N).
+add_keys([],[]).
+add_keys([X|Xs],[P|Ps]) :- 
+    add_key(X,P), 
+    add_keys(Xs,Ps).
+rem_key(_-X, X).
+rem_keys([],[]).
+rem_keys([P|Ps],[X|Xs]) :- 
+    rem_key(P,X), 
+    rem_keys(Ps,Xs).
+lsort(List,Sorted) :-
+    add_keys(List, Keyed),
+    keysort(Keyed, SortedByKey),
+    rem_keys(SortedByKey, Sorted).
 % 
 % b) Again, we suppose that a list (InList) contains elements that are lists
 % themselves. But this time the objective is to sort the elements of InList
@@ -299,3 +304,14 @@ lsort([H|T],[Min|Rest]) :-
 % length 4 and 1, both lengths appear just once. The third and forth list have
 % length 3; there are two list of this length. And finally, the last three
 % lists have length 2. This is the most frequent length. 
+flat1([],[]).
+flat1([[A|As]|Bs], Zs) :-
+    flat1(Bs, Cs),
+    append([A|As], Cs, Zs).
+lfsort(List, List2) :- 
+    add_keys(List, Keyed),
+    keysort(Keyed, SortedByKey),
+    group_pairs_by_key(SortedByKey, KeyedGroups),
+    rem_keys(KeyedGroups, Groups),
+    lsort(Groups, SortedNested),
+    flat1(SortedNested, List2).
