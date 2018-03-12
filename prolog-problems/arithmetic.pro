@@ -17,3 +17,18 @@ is_prime(N) :-
     integer(N),
     N > 1,
     \+ is_composite(N).
+
+% 2.02 (**) Determine the prime factors of a given positive integer.
+%     Construct a flat list containing the prime factors in ascending order.
+%     Example:
+%     ?- prime_factors(315, L).
+%     L = [3,3,5,7]
+prime_factors(N, [N]) :- is_prime(N).
+prime_factors(N, [F|Fs]) :-
+    S is sqrt(N),
+    in_range(2, S, F),
+    is_prime(F),
+    Q is N / F,
+    integer(Q),
+    !,
+    prime_factors(Q, Fs).
