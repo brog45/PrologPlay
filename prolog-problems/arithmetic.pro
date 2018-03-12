@@ -25,6 +25,8 @@ is_prime(N) :-
 %     L = [3,3,5,7]
 prime_factors(N, [N]) :- is_prime(N).
 prime_factors(N, [F|Fs]) :-
+    integer(N),
+    N > 0,
     S is sqrt(N),
     in_range(2, S, F),
     is_prime(F),
