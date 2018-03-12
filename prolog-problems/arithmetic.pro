@@ -9,9 +9,9 @@ in_range(From, To, X) :-
     in_range(Next, To, X).
 is_composite(N) :-
     S is sqrt(N),
-    in_range(2, S, F),
-    B is N mod F,
-    B = 0,
+    in_range(2, S, Factor),
+    Remainder is N mod Factor,
+    Remainder = 0,
     !.
 is_prime(N) :-
     integer(N),
