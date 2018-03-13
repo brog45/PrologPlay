@@ -49,3 +49,11 @@ prime_factors_mult(N, L) :-
     prime_factors(N, Fs),
     encode(Fs, Gs),
     flip_encoded(Gs, L).
+
+% 2.04 (*) A list of prime numbers.
+%     Given a range of integers by its lower and upper limit, construct a list of all prime numbers in that range.
+prime_in_range(From, To, N) :-
+    in_range(From, To, N),
+    is_prime(N).
+primes_in_range(From, To, L) :-
+    findall(N, prime_in_range(From, To, N), L).
