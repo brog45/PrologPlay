@@ -127,5 +127,12 @@ goldbach_list(From, To) :-
 %     ?- G is gcd(36,63).
 %     G = 9
 gcd(A, 0, A) :- !.
-gcd(A, B, Y) :- X is A mod B, gcd(B, X, Y).
+gcd(A, B, Y) :- B \= 0, X is A mod B, gcd(B, X, Y).
 gcd(A, B) := G :- gcd(A, B, G).
+
+% 2.08 (*) Determine whether two positive integer numbers are coprime.
+%     Two numbers are coprime if their greatest common divisor equals 1.
+%     Example:
+%     ?- coprime(35, 64).
+%     Yes
+coprime(A, B) :- gcd(A, B, 1).
