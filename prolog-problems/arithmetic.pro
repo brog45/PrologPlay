@@ -116,3 +116,16 @@ goldbach_list(From, To, Minimum) :-
 goldbach_list(_,_,_).
 goldbach_list(From, To) :- 
     goldbach_list(From, To, 2).
+
+% 2.07 (**) Determine the greatest common divisor of two positive integer numbers.
+%     Use Euclid's algorithm.
+%     Example:
+%     ?- gcd(36, 63, G).
+%     G = 9
+%
+%     Define gcd as an arithmetic function; so you can use it like this:
+%     ?- G is gcd(36,63).
+%     G = 9
+gcd(A, 0, A) :- !.
+gcd(A, B, Y) :- X is A mod B, gcd(B, X, Y).
+gcd(A, B) := G :- gcd(A, B, G).
