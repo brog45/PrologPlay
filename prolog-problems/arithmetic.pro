@@ -136,3 +136,30 @@ gcd(A, B) := G :- gcd(A, B, G).
 %     ?- coprime(35, 64).
 %     Yes
 coprime(A, B) :- gcd(A, B, 1).
+
+% 2.09 (**) Calculate Euler's totient function phi(m).  Euler's so-called totient
+%     function phi(m) is defined as the number of positive integers r (1 <= r < m)
+%     that are coprime to m.
+%
+%     Example: m = 10: r = 1,3,7,9; thus phi(m) = 4. Note the special case: phi(1) = 1.
+%
+%     ?- Phi is totient_phi(10).
+%     Phi = 4
+%
+%     Find out what the value of p, Rhi(m) is if m is a prime number. Euler's
+%     totient function plays an important role in one of the most widely used
+%     public key cryptography methods (RSA). In this exercise you should use the
+%     most primitive method to calculate this function. There is a smarter way
+%     that we shall use in 2.10.
+in_r_range(From, To, _) :- From > To, !, fail.
+in_r_range(From, To, From) :- From < To.
+in_r_range(From, To, X) :-
+    Next is From + 1,
+    in_range(Next, To, X).
+r(M, R) :-
+    in_r_range(1, M, R),
+    coprime(M, R).
+totient_phi(1, 1).
+totient_phi(M, N) :-
+    findall(R, r(M, R), Rs),
+    length(Rs, N).
