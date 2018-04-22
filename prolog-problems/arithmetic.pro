@@ -151,7 +151,7 @@ coprime(A, B) :- gcd(A, B, 1).
 %     public key cryptography methods (RSA). In this exercise you should use the
 %     most primitive method to calculate this function. There is a smarter way
 %     that we shall use in 2.10.
-in_r_range(From, To, _) :- From > To, !, fail.
+in_r_range(From, To, _) :- From >= To, !, fail.
 in_r_range(From, To, From) :- From < To.
 in_r_range(From, To, X) :-
     Next is From + 1,
