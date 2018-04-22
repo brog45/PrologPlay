@@ -152,7 +152,7 @@ coprime(A, B) :- gcd(A, B, 1).
 %     most primitive method to calculate this function. There is a smarter way
 %     that we shall use in 2.10.
 in_r_range(From, To, _) :- From >= To, !, fail.
-in_r_range(From, To, From) :- From < To.
+in_r_range(From, _, From).
 in_r_range(From, To, X) :-
     Next is From + 1,
     in_range(Next, To, X).
