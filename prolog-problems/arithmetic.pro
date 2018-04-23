@@ -159,7 +159,29 @@ in_r_range(From, To, X) :-
 r(M, R) :-
     in_r_range(1, M, R),
     coprime(M, R).
-totient_phi(1, 1).
+totient_phi(1, 1) :- !.
 totient_phi(M, N) :-
     findall(R, r(M, R), Rs),
     length(Rs, N).
+
+% 2.10 (**) Calculate Euler's totient function phi(m) (2).
+%     See problem 2.09 for the definition of Euler's totient function. If the
+%     list of the prime factors of a number m is known in the form of problem
+%     2.03 then the function phi(m) can be efficiently calculated as follows:
+%     Let [[p1,m1],[p2,m2],[p3,m3],...] be the list of prime factors (and their
+%     multiplicities) of a given number m. Then phi(m) can be calculated with
+%     the following formula:
+% 
+%     phi(m) = (p1 - 1) * p1**(m1 - 1) * (p2 - 1) * p2**(m2 - 1) * (p3 - 1) * p3**(m3 - 1) * ...
+% 
+%     Note that a**b stands for the b'th power of a.
+%
+totient_phi2_loop(Accumulator, [[P|M]], N) :-
+    !, N is Accumulator * (P - 1) * (P ** (M - 1)).
+totient_phi2_loop(Accumulator, [[P|M]|Tail], N) :-
+    !, Next is Accumulator * (P - 1) * (P ** (M - 1)),
+    totient_phi2_loop(Next, Tail, N).
+totient_phi2(1, 1) :- !.
+totient_phi2(M, N) :-
+    prime_factors_mult(M, L),
+    !, totient_phi2_loop(1, L, N).
