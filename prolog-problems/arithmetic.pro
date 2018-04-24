@@ -185,3 +185,13 @@ totient_phi2(1, 1) :- !.
 totient_phi2(M, N) :-
     prime_factors_mult(M, L),
     !, totient_phi2_loop(1, L, N).
+
+% 2.11 (*) Compare the two methods of calculating Euler's totient function.
+%     Use the solutions of problems 2.09 and 2.10 to compare the algorithms.
+%     Take the number of logical inferences as a measure for efficiency. Try
+%     to calculate phi(10090) as an example.
+compare_totients :-
+    time(totient_phi(10090, Phi)),
+    write("totient_phi(10090, Phi) -> Phi = "), write(Phi), nl,
+    time(totient_phi2(10090, Phi2)),
+    write("totient_phi2(10090, Phi2) -> Phi2 = "), write(Phi2), nl.
