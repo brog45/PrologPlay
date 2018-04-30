@@ -22,7 +22,7 @@ or(A,B) :- A; B.
 nand(A,B) :- not(and(A,B)).
 nor(A,B) :- not(or(A,B)).
 xor(A,B) :- A, \+ B; B, \+ A.
-impl(A,B) :- B; not(A).
+impl(A,B) :- not(A); B.
 equ(A,B) :- and(A,B); nor(A,B).
 bind(false).
 bind(true).
