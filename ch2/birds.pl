@@ -1,3 +1,5 @@
+:- use_module(native).
+
 eats(X):- ask(eats, X).
 feet(X):- ask(feet, X).
 wings(X):- ask(winds, X).
