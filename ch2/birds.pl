@@ -1,4 +1,8 @@
-:- use_module(native).
+% :- use_module(native).
+:- dynamic ask/2.
+
+top_goal(X) :-
+    bird(X).
 
 bird(laysan_albatross) :-
     family(albatross),
