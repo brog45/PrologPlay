@@ -1,4 +1,4 @@
-% trivial.pl: a trivial OOPS example for simple testing
+% hello.pl: a trivial OOPS example for simple testing
 % This trivial script simply prints "Hello, Prolog!"
 
 % load oops operator definitions
