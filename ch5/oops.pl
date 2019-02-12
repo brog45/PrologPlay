@@ -2,12 +2,8 @@
 
 :- dynamic initial_data/1, fact/1, rule/1.
 
-% operator definitions
-
-:- op(800,xfx,==>). % used to separate LHS and RHS
-:- op(500,xfy,#).   % used to separate attributes and values
-:- op(810,fx,rule). % used to define rules
-:- op(700,xfy,#).   % used for unification instead of =
+% load oops operator definitions
+:- consult(oops_ops).
 
 main :- welcome, supervisor.
 
