@@ -9,8 +9,8 @@ initial_data([
         hello
     ]).
 
-rule 1#
-    [ 1# hello ]
+rule 1:
+    [ 1: hello ]
     ==>
     [ write("Hello, Prolog!")
     , nl

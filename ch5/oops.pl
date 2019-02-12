@@ -63,7 +63,7 @@ assert_list([H|T]) :-
    */
 
 go :- 
-    call(rule ID # LHS ==> RHS),
+    call(rule ID: LHS ==> RHS),
     try(LHS, RHS),
     write("Rule fired "), write(ID), nl,
     !, go.
@@ -76,7 +76,7 @@ try(LHS, RHS) :-
 % recursively go through the LHS list, matching conditions against working storage
 
 match([]) :- !.
-match([_#Premise|Rest]) :-
+match([_:Premise|Rest]) :-
     !,
     (fact(Premise); 
      test(Premise)), % comparison, rather than fact
@@ -132,11 +132,11 @@ take(list(X)) :- !, lst(X).
 
 retr(all, LHS) :- !, retrall(LHS).
 retr(N, []) :- !, format("retract error, no~w~n", [N]).
-retr(N, [N#Premise|_]) :- !, retract(fact(Premise)).
+retr(N, [N:Premise|_]) :- !, retract(fact(Premise)).
 retr(N, [_|Rest]) :- !, retr(N,Rest).
 
 retrall([]).
-retrall([_#Premise|Rest]) :- 
+retrall([_:Premise|Rest]) :- 
     retract(fact(Premise)),
     !, retrall(Rest).
 retrall([Premise|Rest]) :- 
