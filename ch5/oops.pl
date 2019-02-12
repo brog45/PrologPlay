@@ -1,3 +1,5 @@
+:- module(oops,[main/0, run/1]).
+
 :- dynamic initial_data/1, fact/1, rule/1.
 
 % operator definitions
@@ -8,6 +10,8 @@
 :- op(700,xfy,#).   % used for unification instead of =
 
 main :- welcome, supervisor.
+
+run(F) :- reconsult(F), initialize, go.
 
 welcome :- 
     write("OOPS - a toy production system"), nl, nl,
@@ -20,7 +24,7 @@ welcome :-
 
 supervisor :-
     repeat,
-    write("=>"),
+    writeln("=>"),
     read(X),
     doit(X),
     X = exit.
@@ -39,7 +43,7 @@ do(_) :- write("invalid command"), nl.
 % loads the rules (Prolog terms) into the Prolog database
 
 load :-
-    write('File name? '),
+    writeln('File name? '),
     read(F),
     reconsult(F).
 
@@ -67,6 +71,7 @@ go :-
     try(LHS, RHS),
     write("Rule fired "), write(ID), nl,
     !, go.
+go.
 
 try(LHS, RHS) :-
     match(LHS),
@@ -109,7 +114,7 @@ process([Action|Rest], LHS) :-
 % otherwise, just take the action.
 
 take(retract(N), LHS) :-
-    (N == all, integer(N)),
+    (N == all; integer(N)),
     !, retr(N, LHS).
 take(A, _) :- take(A), !.
 
