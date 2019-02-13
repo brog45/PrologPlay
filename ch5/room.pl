@@ -30,7 +30,36 @@ rule 1:
     , write("The format is Item#Length."), nl
     , write("The legal values are:" ), nl
     , write(LF), nl, nl
-    , write("When there is no more furniture, enter end#end."), nl
+    , write("When there is no more furniture, enter end:end."), nl
     , assert(goal(read_furniture))
     ].
 
+rule 2:
+    [ 1: furniture(end,end)
+    , 2: goal(read_furniture)
+    ]
+    ==>
+    [ retract(all)
+    , assert(goal(read_walls))
+    ].
+
+rule 3:
+    [ goal(read_furniture)
+    , legal_furniture(LF)
+    ]
+    ==>
+    [ prompt("furniture> ", F:L)
+    , write(blargh), nl
+    , member(F, LF)
+    , write(narf), nl
+    , assert(furniture(F,L))
+    ].
+
+rule 4:
+    [ 1: goal(read_furniture) 
+    , 2: legal_furniture(LF)
+    ]
+    ==>
+    [ write("Unknown piece of furniture. Must be one of:"), nl
+    , write(LF), nl
+    ].
