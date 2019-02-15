@@ -63,3 +63,104 @@ rule 4:
     [ write("Unknown piece of furniture. Must be one of:"), nl
     , write(LF), nl
     ].
+ 
+ rule 5:
+    [ 1: goal(read_walls)
+    ]
+    ==>
+    [ retract(1)
+    , prompt("What is the length of the north and south sides?", LengthNS)
+    , prompt("What is the length of the east and west sides?", LengthEW)
+    , assert(wall(north, LengthNS))
+    , assert(wall(south, LengthNS))
+    , assert(wall(east, LengthEW))
+    , assert(wall(west, LengthEW))
+    , assert(goal(find_door))
+    ].
+
+rule 6:
+    [ 1: goal(find_door)
+    ]
+    ==>
+    [ retract(1)
+    , prompt("Which wall has the door?", DoorWall)
+    , prompt("What is the width of the door?", DoorWidth)
+    , retract(wall(DoorWall, X))
+    , NewWidth = X - DoorWidth
+    , assert(wall(DoorWall, NewWidth))
+    , assert(position(door, DoorWall))
+    , assert(goal(find_plugs))
+    , write('Which walls have plugs? "end" when no more plugs'), nl
+    ].
+
+rule 7:
+    [ 1: goal(find_plugs)
+    , 2: position(plug, end)
+    ]
+    ==> 
+    [ retract(all)
+    ].
+
+rule 8:
+    [ goal(find_plugs)
+    ]
+    ==>
+    [ prompt("Side: ", Wall)
+    , assert(position(plug, Wall))
+    ].
+
+% furtniture rules
+
+% Start with the couch. The couch should either be opposite the door or to its right.
+
+rule f1:
+    [ 1: furniture(couch, LenC)
+    ,    position(door, DoorWall)
+    ,    opposite(DoorWall, OW)
+    , 2: right(DoorWall, RW)
+    ,    wall(OW, LenOW)
+    ,    wall(RW, LenRW)
+    ,    LenOW >= LenRW
+    ,    LenC =< LenOW
+    ]
+    ==>
+    [ retract(1)
+    , assert(position(couch, OW))
+    , retract(2)
+    , NewSpace = LenOW - LenC
+    , assert(wall(OW, NewSpace))
+    ].
+
+rule f1:
+    [ 1: furniture(couch, LenC)
+    ,    position(door, DoorWall)
+    ,    opposite(DoorWall, OW)
+    ,    right(DoorWall, RW)
+    , 2: wall(OW, LenOW)
+    ,    wall(RW, LenRW)
+    ,    LenOW =< LenRW
+    ,    LenC =< LenRW
+    ]
+    ==>
+    [ retract(1)
+    , assert(position(couch, RW))
+    , retract(2)
+    , NewSpace = LenRW - LenC
+    , assert(wall(RW, NewSpace))
+    ].
+
+% The TV should be opposite the couch.
+
+rule f3:
+    [ 1: furniture(tv, LenTV)
+    ,    position(couch, CW)
+    ,    opposite(CW, W)
+    , 2: wall(W, LenW)
+    ]
+    ==>
+    [ retract(1)
+    , assert(position(tv, W))
+    , retract(2)
+    , NewSpace = LenW - LenTV
+    , assert(wall(W, NewSpace))
+    ].
