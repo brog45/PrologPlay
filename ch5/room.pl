@@ -84,7 +84,8 @@ rule 3:
 
 rule 4:                              % If rule 3 matched and failed
   [1: goal(read_furniture),          % the action, then member must
-   2: legal_furniture(LF)]           % have failed.
+   2: legal_furniture(LF),
+      furniture(_)]           % have failed.
  ==>
   [write('Unknown piece of furniture, must be one of:'),nl,
    write(LF),nl].
@@ -305,7 +306,8 @@ rule f13:
 % When no other rules fire, here is the summary
 
 rule f14:
-  [1: not_end_yet]
+  [1: not_end_yet,
+   2: not(goal(_))]
  ==>
   [retract(1),
    write('Recommendations:'),nl,nl,

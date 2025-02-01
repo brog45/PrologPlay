@@ -1,6 +1,6 @@
 :- module(oops,[main/0, run/1]).
 
-:- dynamic initial_data/1, fact/1, rule/1.
+:- dynamic initial_data/1, fact/2, rule/1, instantiation/1.
 
 % load oops operator definitions
 :- consult(oops_ops).
@@ -53,7 +53,7 @@ initialize :-
 
 assert_list([]) :- !.
 assert_list([H|T]) :- 
-    assertz(fact(H)),
+    assertz(fact(H, 0)),
     !, assert_list(T).
 
 /* the main inference loop, find a rule and try it.
@@ -63,34 +63,73 @@ assert_list([H|T]) :-
    */
 
 go :- 
-    call(rule ID: LHS ==> RHS),
-    try(LHS, RHS),
+    conflict_set(CS),
+    select_rule(CS, r(Inst, ID, LHS, RHS)),
+    process(RHS, LHS),
+    asserta( instantiation(Inst) ),
     write("Rule fired "), write(ID), nl,
     !, go.
 go.
 
-try(LHS, RHS) :-
-    match(LHS),
-    process(RHS, LHS).
+conflict_set(ConflictSet) :-
+    findall(r(Inst, ID, LHS, RHS),
+            conflict(Inst, ID, LHS, RHS),
+            ConflictSet).
+
+conflict(Inst, ID, LHS, RHS) :-
+    rule ID: LHS ==> RHS, 
+    match(LHS, Inst).
+
+select_rule(CS, R) :-
+    refract(CS, CS1),
+    lex_sort(CS1, [R|_]).
+
+lex_sort(L, L1) :-
+    build_keys(L, LK),
+    keysort(LK, X),
+    reverse(X,Y),
+    strip_keys(Y, L1).
+
+build_keys([],[]).
+build_keys([r(Inst,A,B,C)|T],[Key-r(Inst,A,B,C)|TK]) :-
+    build_chlist(Inst,ChronList),
+    sort(ChronList, X),
+    reverse(X, Key),
+    build_keys(T,TK).
+
+build_chlist([],[]).
+build_chlist([_/Chron|T], [Chron|TC]) :-
+    build_chlist(T,TC).
+
+strip_keys([],[]).
+strip_keys([_-X|Y],[X|Z]) :-
+    strip_keys(Y,Z).
+
+refract([], []).
+refract([r(Instance,_,_,_)|T], TR) :-
+    instantiation(Instance),
+    !, refract(T, TR).
+refract([H|T], [H|TR]) :-
+    refract(T, TR).
 
 % recursively go through the LHS list, matching conditions against working storage
 
-match([]) :- !.
-match([_:Premise|Rest]) :-
+match([], []) :- !.
+match([_:Premise|Rest], [Premise/Time|IRest]) :-
     !,
-    (fact(Premise); 
-     test(Premise)), % comparison, rather than fact
-    match(Rest).
-match([Premise|Rest]) :-
+    (fact(Premise, Time); 
+     test(Premise), Time = 0), % comparison, rather than fact
+    match(Rest, IRest).
+match([Premise|Rest], [Premise/Time|IRest]) :-
     % condition number not specified
     !, 
-    (fact(Premise); 
-     test(Premise)),
-    match(Rest).
+    (fact(Premise, Time); 
+     test(Premise), Time = 0),
+    match(Rest, IRest).
 
 % various tests allowed on the LHS
 
-test(not(X)) :- !, \+ fact(X).
+test(not(X)) :- !, \+ fact(X, _Chron).
 test(X#Y)    :- !, X=Y.
 test(X>Y)    :- !, X>Y.
 test(X>=Y)   :- !, X>=Y.
@@ -109,14 +148,23 @@ process([Action|Rest], LHS) :-
 % If it's retract, use the reference number stored in the LRefs list; 
 % otherwise, just take the action.
 
+getchron(N) :-
+    ( retract(chron(N)) ; N = 1 ),
+    NN is N + 1,
+    asserta(chron(NN)).
+
+assert_ws(fact(X, T)) :-
+    getchron(T),
+    asserta(fact(X, T)).
+
 take(retract(N), LHS) :-
     (N == all; integer(N)),
     !, retr(N, LHS).
 take(A, _) :- take(A), !.
 
-take(retract(X)) :- !, retract(fact(X)).
+take(retract(X)) :- !, retract(fact(X, _)).
 take(assert(X)) :- 
-    !, asserta(fact(X)),
+    !, assert_ws(fact(X, _)),
     write(adding-X), nl.
 take(X#Y) :- !, X=Y.
 take(X=Y) :- !, X is Y.
@@ -132,15 +180,15 @@ take(list(X)) :- !, lst(X).
 
 retr(all, LHS) :- !, retrall(LHS).
 retr(N, []) :- !, format("retract error, no~w~n", [N]).
-retr(N, [N:Premise|_]) :- !, retract(fact(Premise)).
+retr(N, [N:Premise|_]) :- !, retract(fact(Premise, _)).
 retr(N, [_|Rest]) :- !, retr(N,Rest).
 
 retrall([]).
 retrall([_:Premise|Rest]) :- 
-    retract(fact(Premise)),
+    retract(fact(Premise, _)),
     !, retrall(Rest).
 retrall([Premise|Rest]) :- 
-    retract(fact(Premise)),
+    retract(fact(Premise, _)),
     !, retrall(Rest).
 retrall([_|Rest]) :-
     !, retrall(Rest).
@@ -148,7 +196,7 @@ retrall([_|Rest]) :-
 % list all terms in working storage
 
 lst :-
-    fact(X),
+    fact(X, _Chron),
     write(X), nl,
     fail.
 lst.
@@ -156,8 +204,7 @@ lst.
 % list all terms that match the pattern
 
 lst(X) :-
-    fact(X),
+    fact(X, _Chron),
     write(X), nl, 
     fail.
 lst(_).
-
